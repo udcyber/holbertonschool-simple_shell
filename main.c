@@ -1,5 +1,4 @@
 #include "hsh.h"
-
 /**
  * main - entry point of the shell
  * @argc: argument count
@@ -39,10 +38,11 @@ int main(int argc, char **argv)
 			free_args(args);
 			continue;
 		}
+		args[0] = full_path;
 		exec_cmd(args, argv);
-		free(full_path);
+		free(args[0]);
+		args[0] = NULL;
 		free_args(args);
 	}
-	free(line);
 	return (0);
 }
