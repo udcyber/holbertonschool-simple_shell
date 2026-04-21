@@ -1,7 +1,7 @@
 # 🐚 Simple Shell — hsh
 
 > A simple UNIX command line interpreter written in C.  
-> Project by **Ouarda** & **Ulysse** — Holberton School, 2026.
+> Project by **Ouarda Bouchema** & **Ulysse Dewaleyne** — Holberton School, 2026.
 
 ---
 
@@ -9,12 +9,12 @@
 
 - [Description](#description)
 - [Flowchart](#flowchart)
-- [Requirements](#requirements)
 - [File Structure](#file-structure)
 - [Compilation](#compilation)
 - [Usage](#usage)
 - [Built-ins](#built-ins)
 - [Examples](#examples)
+- [Requirements](#requirements)
 - [Authors](#authors)
 
 ---
@@ -22,26 +22,52 @@
 ## Description
 
 `hsh` is a simple UNIX command line interpreter that mimics the behavior of `/bin/sh`.  
-It reads commands from standard input, locates executables using the `PATH` environment variable, and executes them via `fork` and `execve`.
+It runs as an infinite loop — reading, analyzing, and executing commands — until the user exits or sends EOF (`Ctrl+D`).
 
-It supports both **interactive mode** (with a prompt `$`) and **non-interactive mode** (piped input or file redirection).
+---
+
+### Phase 1 — Reading and parsing
+
+When the shell starts, it first checks whether it is running in **interactive mode** (connected to a terminal) or **non-interactive mode** (receiving input from a pipe or file), using `isatty(STDIN_FILENO)`.
+
+- If **interactive**: the prompt `$ ` is displayed and the shell waits for the user to type a command.
+- If **non-interactive**: no prompt is shown and commands are read directly from the input stream.
+
+The input line is read with `getline`. If it returns `-1`, this means EOF was reached (`Ctrl+D`) and the shell exits cleanly.
+
+Once the line is read, it is split into an array of arguments using `strtok` with the delimiters `" \t\n"`.  
+For example: `ls -l /tmp` becomes `args[] = ["ls", "-l", "/tmp", NULL]`.  
+The array is always terminated by `NULL`.
+
+---
+
+### Phase 2 — Locating the command
+
+Before creating any process, the shell checks whether the command is a **built-in** (like `exit` or `env`) using `strcmp`. If it is, it is executed directly — no `fork` is called.
+
+If the command is not a built-in, the shell searches for its full executable path:
+
+1. If the command already contains a `/` (e.g. `/bin/ls`), it is used directly after checking with `access`.
+2. Otherwise, the shell retrieves the `PATH` environment variable, splits it by `:`, and checks each directory using `access(path, X_OK)`.
+
+If the command is not found anywhere in `PATH`, an error message is printed and the shell returns to the prompt — **without forking**.
+
+---
+
+### Phase 3 — Execution
+
+Once the full path is found, the shell calls `fork()` to duplicate the current process:
+
+- The **child process** calls `execve(path, args, environ)` — it becomes the command. If `execve` fails, `perror` is called and the child exits with status `1`.
+- The **parent process** calls `wait(NULL)` — it blocks until the child finishes, then frees memory and loops back to Phase 1.
+
+This cycle repeats indefinitely until `exit` is called or EOF is reached.
 
 ---
 
 ## Flowchart
 
 ![Simple Shell Flowchart](flowchart.webp)
-
----
-
-## Requirements
-
-- Ubuntu 20.04 LTS
-- gcc with flags: `-Wall -Werror -Wextra -pedantic -std=gnu89`
-- Betty style compliant
-- No memory leaks
-- Max 5 functions per file
-- All header files include-guarded
 
 ---
 
@@ -230,8 +256,20 @@ $ echo "qwerty" | ./hsh
 
 ---
 
+## Requirements
+
+- Ubuntu 20.04 LTS
+- gcc with flags: `-Wall -Werror -Wextra -pedantic -std=gnu89`
+- Betty style compliant
+- No memory leaks
+- Max 5 functions per file
+- All header files include-guarded
+
+---
+
 ## Authors
 
 - **Ouarda**
 - **Ulysse**
+
   
