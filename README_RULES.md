@@ -1,7 +1,9 @@
 ## C - Simple Shell
 ---
+
 #### Background Context
   
+Project rules as found in the Holberton project page  
 Write a simple UNIX command interpreter
 
 ---
