@@ -1,7 +1,7 @@
 # 🐚 Simple Shell — hsh
 
 > A simple UNIX command line interpreter written in C.  
-> Project by **Ouarda Bouchema** & **Ulysse Dewaleyne** — Holberton School, 2026.
+> Project by **Ouarda** & **Ulysse** — Holberton School.
 
 ---
 
