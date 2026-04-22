@@ -70,6 +70,13 @@ Compares strings, used notably to identify builtin commands.
 .TP
 .B free(3)
 Frees dynamically allocated memory.
+.SH EXIT STATUS
+.TP
+.B 0
+Success.
+.TP
+.B 1
+Command not found or execution failed.
 .SH RETURN VALUE
 Returns the exit status of the last command executed.
 .SH ENVIRONMENT
@@ -84,6 +91,8 @@ $ /bin/echo Hello World
 $ env
 $ exit
 .fi
+.SH SEE ALSO
+sh(1), bash(1), execve(2), fork(2), wait(2), getline(3), strtok(3), isatty(3)
 .SH AUTHORS
 Written by Ulysse and Ouarda \- Holberton School, 2026.
 
