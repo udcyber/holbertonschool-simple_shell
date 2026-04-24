@@ -20,25 +20,27 @@ void handle_env(void)
  * handle_exit - exit the shell properly
  * @args: array of arguments
  * @line: the input line to free
+ * @status: exit status
  */
-void handle_exit(char **args, char *line)
+void handle_exit(char **args, char *line, int status)
 {
 	free(line);
 	free(args);
-	exit(0);
+	exit(status);
 }
 
 /**
  * handle_builtins - check and execute builtins
  * @args: array of arguments
  * @line: the input line to free
+ * @status: last exit status
  * Return: 1 if builtin executed, 0 otherwise
  */
-int handle_builtins(char **args, char *line)
+int handle_builtins(char **args, char *line, int status)
 {
 	if (strcmp(args[0], "exit") == 0)
 	{
-		handle_exit(args, line);
+		handle_exit(args, line, status);
 		return (1);
 	}
 	if (strcmp(args[0], "env") == 0)
