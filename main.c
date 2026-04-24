@@ -47,11 +47,10 @@ int main(int argc, char **argv)
 			continue;
 		}
 		args[0] = full_path;
-		exec_cmd(args, argv);
+		status = exec_cmd(args, argv);
 		free(args[0]);
 		args[0] = NULL;
 		free_args(args);
-		status = 0;
 	}
 	return (status);
 }
